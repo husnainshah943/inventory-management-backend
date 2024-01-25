@@ -13,8 +13,10 @@ const Product = require("./models/product");
 const app = express();
 const PORT = process.env.PORT || 8080;
 main();
+app.use(cors({
+  origin: ['https://react-inventory-management-895ee5cb278c.herokuapp.com', 'https://another-allowed-origin.com']
+}));
 app.use(express.json());
-app.use(cors());
 
 // Store API
 app.use("/api/store", storeRoute);
