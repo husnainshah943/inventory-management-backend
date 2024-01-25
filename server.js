@@ -1,4 +1,5 @@
 require("dotenv").config();
+const nodemailer = require("nodemailer");
 const express = require("express");
 const { main } = require("./models/index");
 const productRoute = require("./router/product");
@@ -53,6 +54,51 @@ app.post("/api/login", async (req, res) => {
     res.send(error);
   }
 });
+
+//forget
+app.post("/api/forget", async (req, res) => {
+  console.log(req.body);
+  try {
+    const user = await User.findOne({
+      email: req.body.email,
+    });
+
+    if (user) {
+      // Assuming you have a 'password' field in your User model
+      const password = user.password; // Fetch the password from the user object
+      sendPasswordByEmail(req.body.email, password); // Send the password to the user's email
+      res.send("Password sent to your email.");
+    } else {
+      res.status(401).send("Email not found!");
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+async function sendPasswordByEmail(email, password) {
+  // Create a nodemailer transporter
+  let transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: "husnainshah8682000@gmail.com", // Your email address
+      pass: "itxkausgplernrnf", // Your email password
+    },
+  });
+
+  // Send mail with defined transport object
+  let info = await transporter.sendMail({
+    from: '"Vansh" <vansh@example.com>', // Sender address
+    to: email, // List of recipients
+    subject: "Password Recovery", // Subject line
+    text: `Your password is: ${password}`, // Plain text body
+    // You can also provide an HTML body if you wish
+    // html: "<b>Hello world?</b>",
+  });
+
+  console.log("Message sent: %s", info.messageId);
+}
 
 // Getting User Details of login user
 app.get("/api/login", (req, res) => {
