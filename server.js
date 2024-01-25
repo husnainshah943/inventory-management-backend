@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const { main } = require("./models/index");
 const productRoute = require("./router/product");
@@ -7,7 +8,7 @@ const salesRoute = require("./router/sales");
 const cors = require("cors");
 const User = require("./models/users");
 const Product = require("./models/product");
-require("dotenv").config();
+
 
 const app = express();
 const PORT = process.env.PORT || 8080;
